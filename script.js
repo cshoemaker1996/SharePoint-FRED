@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // URL of the proxy server or API endpoint
-    const apiUrl = 'https://cors-anywhere.herokuapp.com/https://api.stlouisfed.org/fred/series/observations?series_id=GS10&api_key=230bfcd42f3ee31c1087f600619e9c91&file_type=json&limit=1';
+    const apiUrl = 'https://api.stlouisfed.org/fred/series/observations?series_id=GS10&api_key=230bfcd42f3ee31c1087f600619e9c91&file_type=json&limit=1';
 
     // Fetch the data from the API
     fetch(apiUrl)
