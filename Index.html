@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>US 11-Year Treasury Yield</title>
+    <style>
+        #data {
+            font-family: Arial, sans-serif;
+        }
+        .yield, .historical {
+            margin-bottom: 20px;
+        }
+        .yield h2, .historical h2 {
+            color: #0078d4; /* SharePoint blue color */
+        }
+    </style>
+</head>
+<body>
+    <div id="data">
+        <div class="yield">
+            <h2>Current US 10-Year Treasury Yield</h2>
+            <p id="current-yield">Loading...</p>
+        </div>
+        <div class="historical">
+            <h2>Historical Data (Last 5 Days)</h2>
+            <ul id="historical-data">
+                <li>Loading...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = '230bfcd42f3ee31c1087f600619e9c91 '; // Replace with your FRED API key
+        const seriesId = 'GS10';
+
+        async function fetchData() {
+            const currentYieldUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&limit=1`;
+            const historicalUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&limit=5&sort_order=desc`;
+
+            try {
+                const [currentResponse, historicalResponse] = await Promise.all([
+                    fetch(currentYieldUrl),
+                    fetch(historicalUrl)
+                ]);
+
+                const currentData = await currentResponse.json();
+                const historicalData = await historicalResponse.json();
+
+                const latestObservation = currentData.observations[0];
+                document.getElementById('current-yield').innerText = `${latestObservation.date}: ${latestObservation.value}%`;
+
+                const historicalList = document.getElementById('historical-data');
+                historicalList.innerHTML = ''; // Clear loading message
+                historicalData.observations.forEach(observation => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${observation.date}: ${observation.value}%`;
+                    historicalList.appendChild(listItem);
+                });
+
+            } catch (error) {
+                document.getElementById('current-yield').innerText = 'Failed to fetch data.';
+                document.getElementById('historical-data').innerHTML = '<li>Failed to fetch historical data.</li>';
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
